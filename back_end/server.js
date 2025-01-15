@@ -1,24 +1,25 @@
-const axios = require('axios');
-const express = require('express');
-const bodyParser = require('body-parser');
-require('dotenv').config();
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
+const { connectDB } = require("./config/db.js");
 
-const options = {
-    method: 'GET',
-    url: 'https://urban-dictionary7.p.rapidapi.com/v0/define',
-    params: {term: 'hello'},
-    headers: {
-        'X-RapidAPI-Host': 'urban-dictionary7.p.rapidapi.com',
-        'X-RapidAPI-Key': process.env.RAPIDAPI_KEY
-    }
-};
+app.use(express.json());
+app.use(cors());
 
-axios.request(options)
-    .then(response => {
-        console.log(response.data);
-    })
-    .catch(error => {
-        console.error(error);
-    });
+const userRoutes = require("./routes/userRoutes.js");
+const wordRoutes = require("./routes/wordRoutes.js");
+const translateRoutes = require("./routes/translateRoutes.js");
+connectDB();
+
+app.get("/api/word/:word", wordRoutes);
+
+app.use("/api/user", userRoutes);
+
+app.post("/translate", translateRoutes);
+
+const Port = process.env.PORT;
+app.listen(Port, () => {
+  console.log(`Server is running on http://localhost:${Port}`);
+});
