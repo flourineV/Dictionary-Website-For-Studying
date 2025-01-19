@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import SearchBar from "../../layouts/components/Search/Search";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
+import { addFlashcard } from "../../utils/flashcardApi";
 
 const WordMeaning = ({ wordData, error }) => {
   const { word } = useParams(); // Lấy từ khóa từ URL
@@ -30,6 +31,17 @@ const WordMeaning = ({ wordData, error }) => {
   const handleSearch = () => {
     if (searchWord.trim()) {
       navigate(`/word-meaning/${searchWord}`); // Cập nhật URL với từ khóa tìm kiếm
+    }
+  };
+
+  const handleAddFlashcard = async (word, meaning) => {
+    if (!isLoggedIn) return;
+    try {
+      await addFlashcard(word, meaning); // Gọi API thêm flashcard
+      alert(`Added "${word}" to your flashcards!`);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to add flashcard. Please try again.");
     }
   };
 
@@ -124,6 +136,12 @@ const WordMeaning = ({ wordData, error }) => {
                             : "bg-gray-200 text-gray-400 cursor-not-allowed"
                         }`}
                         disabled={!isLoggedIn}
+                        onClick={() =>
+                          handleAddFlashcard(
+                            wordData.word,
+                            definition.definition
+                          )
+                        }
                       >
                         +
                       </button>

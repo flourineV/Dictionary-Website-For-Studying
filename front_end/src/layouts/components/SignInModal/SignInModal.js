@@ -57,6 +57,7 @@ function Login({ closeModal, onLoginSuccess }) {
       localStorage.setItem("isLoggedIn", true);
       localStorage.setItem("token", result.token);
       localStorage.setItem("user", JSON.stringify(newUser));
+      localStorage.setItem("userId", result.user._id);
       onLoginSuccess(newUser); // Gọi callback khi đăng nhập thành công
       closeModal();
     } catch (err) {
@@ -88,6 +89,7 @@ function Login({ closeModal, onLoginSuccess }) {
       localStorage.setItem("isLoggedIn", true);
       localStorage.setItem("token", result.token);
       localStorage.setItem("user", JSON.stringify(loggedInUser));
+      localStorage.setItem("userId", result.user._id);
 
       onLoginSuccess(result.user); // Gọi callback khi đăng nhập thành công
       closeModal();
