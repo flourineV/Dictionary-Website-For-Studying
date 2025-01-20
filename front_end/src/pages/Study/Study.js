@@ -12,7 +12,8 @@ import {
   Legend,
 } from "chart.js";
 import { useInView } from "react-intersection-observer";
-
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux"; // Thêm import useSelector
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -25,7 +26,7 @@ ChartJS.register(
 const Study = () => {
   const [animate, setAnimate] = useState(false);
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
-
+  const navigate = useNavigate();
   const { ref, inView } = useInView({
     triggerOnce: true,
     onChange: (inView) => {
@@ -34,6 +35,9 @@ const Study = () => {
       }
     },
   });
+  const userId = useSelector((state) => state.user.userId); // Lấy userId từ Redux
+
+  // Kiểm tra nếu không có userId, điều hướng về trang login
 
   // Generate dates from today backwards
   const generatePastDates = (days) => {
@@ -131,28 +135,28 @@ const Study = () => {
           title="📚 Flashcards"
           content="Reviewing previous words is the key to master it!"
           buttonText="Flashcards GO!"
-          onClick={() => console.log("Flashcards GO!")}
+          onClick={() => navigate(`/flashcards/${userId}`)} // Điều hướng tới "/studymaterials"
         />
         <SquareBox
           images={[images.exercises]}
           title="📝 English Exercises"
           content="Practice exercises to reinforce your learning."
           buttonText="Start Practicing"
-          onClick={() => console.log("Go to Study Exercises")}
+          onClick={() => navigate("/exercises")} // Điều hướng tới "/studymaterials"
         />
         <SquareBox
           images={[images.studymaterials]}
           title="Study Materials"
           content="A profound source of study materials (include IELTS)"
           buttonText="Learning GO!"
-          onClick={() => console.log("Go to Study Exercises")}
+          onClick={() => navigate("/studymaterials")} // Điều hướng tới "/studymaterials"
         />
         <SquareBox
           images={[images.writing]}
           title="Writing Area"
           content="Write your own essays and scores will be appeared!"
           buttonText="Writing GO!"
-          onClick={() => console.log("Go to Study Exercises")}
+          onClick={() => navigate("/writingarea")} // Điều hướng tới "/studymaterials"
         />
       </div>
     </div>

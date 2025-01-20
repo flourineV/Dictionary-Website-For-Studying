@@ -7,12 +7,8 @@ const flashcardsSchema = new mongoose.Schema({
     ref: "user_account",
     required: true,
   },
-  wordId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "words",
-    required: true,
-  },
-  note: { type: String },
+  word: { type: String, required: true },
+  meaning: { type: String, required: true },
 });
 
 const flashCards = mongoose.model("flashCards", flashcardsSchema, "flashcards");

@@ -1,12 +1,21 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3005/api/flashcards"; // Thay bằng URL API của bạn
+const API_URL = "http://localhost:3005/api/flashcards"; // URL cơ bản cho flashcards
 
-// Thêm flashcard vào database
 export const addFlashcard = async (word, meaning) => {
   try {
-    const userId = localStorage.getItem("userId");
-    const response = await axios.post(API_URL, { userId, word, meaning });
+    // Lấy dữ liệu từ localStorage
+    const user = JSON.parse(localStorage.getItem("user")); // Parse chuỗi JSON thành object
+    if (!user || !user._id) {
+      throw new Error("User ID is missing in localStorage");
+    }
+    const userId = user._id; // Lấy _id từ object user
+
+    // Tạo URL kèm userId
+    const url = `${API_URL}/${userId}`;
+
+    // Gửi yêu cầu POST với word và meaning
+    const response = await axios.post(url, { word, meaning });
     return response.data;
   } catch (error) {
     console.error("Error adding flashcard:", error);
@@ -17,8 +26,12 @@ export const addFlashcard = async (word, meaning) => {
 // Lấy danh sách flashcards
 export const getFlashcards = async () => {
   try {
-    const userId = localStorage.getItem("userId");
-    const response = await axios.get(`${API_URL}?userId=${userId}`);
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userId = user._id; // Lấy _id từ object user
+
+    // Tạo URL kèm userId
+    const url = `${API_URL}/${userId}`;
+    const response = await axios.get(url);
     return response.data;
   } catch (error) {
     console.error("Error fetching flashcards:", error);

@@ -8,6 +8,7 @@ const routes = {
   chatbot: "/chatbot",
   dailyword: "/dailyword/:word",
   shops: "/shops",
+  flashcards: "/flashcards/:userId",
 };
 
 export default routes;

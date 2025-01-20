@@ -14,6 +14,8 @@ import Login from "../layouts/components/SignInModal";
 import WordInformation from "../utils/httpRequests";
 import Shops from "../pages/Shops/Shops";
 import NavbarRightSideLayout from "../layouts/NavbarRightSideLayout/index.js";
+import Flashcards from "../pages/Flashcards/flashcards.js";
+
 const PlaceholderPage = () => {
   return <div>This is a placeholder page</div>;
 };
@@ -43,6 +45,7 @@ const publicRoutes = [
     layout: NavbarOnly,
   },
   { path: config.routes.shops, component: Shops },
+  { path: config.routes.flashcards, component: Flashcards, layout: NavbarOnly },
 ];
 
 const privateRoutes = [];

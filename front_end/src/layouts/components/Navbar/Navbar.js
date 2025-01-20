@@ -2,6 +2,7 @@ import config from "../../../config"; //config
 import { Link, useLocation } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import images from "../../../assets/images";
 import {
@@ -19,24 +20,34 @@ import {
   faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
 import Login from "../SignInModal";
-
+import { logoutUser } from "../../../redux/actions/userActions";
 function Navbar() {
-  const location = useLocation();
-  const logoRef = useRef(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate();
   const [selectedLanguage, setSelectedLanguage] = useState("English");
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const dropdownRef = useRef(null);
+  const location = useLocation();
+  const logoRef = useRef(null);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.setItem("isLoggedIn", false);
+    localStorage.removeItem("userId");
     setIsLoggedIn(false);
     setUser(null);
+    dispatch(logoutUser);
     navigate("/");
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -48,23 +59,19 @@ function Navbar() {
     }
   }, []); // Chỉ chạy một lần khi component được render
 
-  const handleLoginSuccess = (user) => {
+  const handleLoginSuccess = (userData) => {
     setIsLoggedIn(true);
-    setUser(user);
+    setUser(userData);
     navigate("/");
-    localStorage.setItem("user", JSON.stringify(user)); // Lưu thông tin người dùng
+    localStorage.setItem("user", JSON.stringify(userData));
+    setIsModalOpen(false);
   };
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
 
   const isActive = (path) => location.pathname === path;
 
   const handleLanguageChange = (event) => {
     setSelectedLanguage(event.target.value);
   };
-
-  const dropdownRef = useRef(null);
 
   // Đóng dropdown khi click ra ngoài
   useEffect(() => {
@@ -80,9 +87,15 @@ function Navbar() {
   }, []);
 
   const handleOutsideClick = (e) => {
-    const menu = e.target.closest(".popup-menu");
-    if (!menu) {
+    if (menuOpen && !e.target.closest(".popup-menu")) {
       setMenuOpen(false);
+    }
+    if (
+      dropdownOpen &&
+      dropdownRef.current &&
+      !dropdownRef.current.contains(e.target)
+    ) {
+      setDropdownOpen(false);
     }
   };
 
@@ -303,7 +316,10 @@ function Navbar() {
         )}
       </nav>
       {isModalOpen && (
-        <Login closeModal={closeModal} onLoginSuccess={handleLoginSuccess} />
+        <Login
+          closeModal={() => setIsModalOpen(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
       )}
     </>
   );

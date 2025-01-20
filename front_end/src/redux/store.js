@@ -1,13 +1,13 @@
 // store.js
 import { configureStore } from "@reduxjs/toolkit";
 import { userReducer } from "./reducers/userReducer";
-import { thunk } from "redux-thunk";
+import modalReducer from "./reducers/modalSlice";
 
 const store = configureStore({
   reducer: {
-    user: userReducer, // Kết hợp các reducers
+    user: userReducer, // Reducer cho user
+    modal: modalReducer, // Reducer cho modal
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk), // Thêm middleware nếu cần
 });
 
 export default store;
