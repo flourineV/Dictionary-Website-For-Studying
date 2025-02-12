@@ -1,129 +1,127 @@
-import React, { useState, useEffect } from "react";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
-import "../../index.css";
-import { enUS } from "date-fns/locale";
+import React, { useState } from "react";
 
-function DailyActivityCalendar() {
-  const [date, setDate] = useState(new Date());
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem("isLoggedIn") === "true"
-  );
-  const [activeStartDate, setActiveStartDate] = useState(
-    new Date(date.getFullYear(), date.getMonth(), 1)
-  );
+const Calendar = () => {
+  const [currentDate, setCurrentDate] = useState(new Date()); // State để lưu ngày hiện tại
+  const currentYear = new Date().getFullYear(); // Lấy năm hiện tại
 
-  const today = new Date();
+  // Hàm để lấy tên tháng
+  const getMonthName = (date) => {
+    return date.toLocaleString("default", { month: "long" });
+  };
 
-  // Hàm điều hướng thủ công
-  const handleNavigation = (direction) => {
-    const currentYear = today.getFullYear();
-    const currentMonth = activeStartDate.getMonth();
-    const currentDate = activeStartDate;
+  // Hàm để lấy số ngày trong tháng
+  const getDaysInMonth = (date) => {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  };
 
-    let newDate;
+  // Hàm để lấy ngày bắt đầu của tháng (ngày đầu tiên của tháng là thứ mấy)
+  const getStartDayOfMonth = (date) => {
+    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  };
 
-    if (direction === "prev") {
-      // Điều hướng tháng trước
-      newDate = new Date(currentDate.setMonth(currentMonth - 1));
-    } else if (direction === "next") {
-      // Điều hướng tháng sau
-      newDate = new Date(currentDate.setMonth(currentMonth + 1));
-    }
-
-    // Giới hạn trong năm hiện tại
+  // Hàm chuyển đến tháng trước
+  const goToPreviousMonth = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(newDate.getMonth() - 1);
     if (newDate.getFullYear() === currentYear) {
-      setActiveStartDate(newDate);
+      setCurrentDate(newDate);
     }
   };
 
-  const handleLogin = () => {
-    localStorage.setItem("isLoggedIn", "true");
-    setIsLoggedIn(true);
+  // Hàm chuyển đến tháng sau
+  const goToNextMonth = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(newDate.getMonth() + 1);
+    if (newDate.getFullYear() === currentYear) {
+      setCurrentDate(newDate);
+    }
   };
 
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-      setIsLoggedIn(loggedIn);
-    };
+  // Kiểm tra xem có thể chuyển đến tháng trước hay không
+  const canGoToPreviousMonth = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(newDate.getMonth() - 1);
+    return newDate.getFullYear() === currentYear;
+  };
 
-    // Lắng nghe sự kiện thay đổi của localStorage
-    window.addEventListener("storage", handleStorageChange);
+  // Kiểm tra xem có thể chuyển đến tháng sau hay không
+  const canGoToNextMonth = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(newDate.getMonth() + 1);
+    return newDate.getFullYear() === currentYear;
+  };
 
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
+  // Tạo danh sách ngày trong tháng
+  const daysInMonth = getDaysInMonth(currentDate);
+  const startDay = getStartDayOfMonth(currentDate);
+  const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  // Tạo danh sách ngày trống (để lấp đầy các ô trống trước ngày đầu tiên của tháng)
+  const emptyDays = Array.from({ length: startDay }, (_, i) => null);
 
   return (
-    <div className="relative left-12 bg-blue-950 p-4 rounded-lg shadow-md w-80">
-      <h2 className="text-white text-lg font-bold mb-4 text-center">
-        Daily Activity
-      </h2>
-      <div className="relative">
-        <div className="flex justify-between items-center mb-2">
-          <button
-            onClick={() => handleNavigation("prev")}
-            className={`text-white ${
-              activeStartDate.getMonth() === 0
-                ? "opacity-50 cursor-not-allowed"
-                : ""
-            }`}
-          >
-            ◄
-          </button>
-          <span className="font-bold text-white">
-            {activeStartDate.toLocaleString("default", {
-              month: "long",
-              year: "numeric",
-            })}
-          </span>
-          <button
-            onClick={() => handleNavigation("next")}
-            className={`text-white ${
-              activeStartDate.getMonth() === 11
-                ? "opacity-50 cursor-not-allowed"
-                : ""
-            }`}
-          >
-            ►
-          </button>
+    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      {/* Phần header với nút chuyển tháng */}
+      <div className="flex items-center justify-between p-4 bg-gray-100">
+        <button
+          onClick={goToPreviousMonth}
+          disabled={!canGoToPreviousMonth()}
+          className={`p-2 ${
+            canGoToPreviousMonth()
+              ? "text-gray-700 hover:bg-gray-200"
+              : "text-gray-400 cursor-not-allowed"
+          }`}
+        >
+          ←
+        </button>
+        <div className="text-center">
+          <h2 className="text-xl font-bold">{getMonthName(currentDate)}</h2>
+          <p className="text-gray-600">{currentYear}</p>
         </div>
-        <Calendar
-          onChange={(value) => setDate(value)}
-          value={date}
-          locale={enUS}
-          tileClassName={({ date }) => {
-            const isToday =
-              date.getDate() === today.getDate() &&
-              date.getMonth() === today.getMonth() &&
-              date.getFullYear() === today.getFullYear();
-            return isToday ? "today" : "";
-          }}
-          className={`custom-calendar ${!isLoggedIn ? "opacity-50" : ""}`}
-          activeStartDate={activeStartDate}
-          onActiveStartDateChange={() => {}}
-          showNeighboringMonth={false}
-          prevLabel={null} // Ẩn điều hướng mặc định
-          nextLabel={null} // Ẩn điều hướng mặc định
-          prev2Label={null} // Ẩn điều hướng năm
-          next2Label={null} // Ẩn điều hướng năm
-          navigationLabel={() => null} // Không hiển thị tiêu đề mặc định
-        />
-        {!isLoggedIn && (
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20 cover-layer">
-            <button
-              onClick={handleLogin}
-              className="bg-white text-blue-950 font-bold py-2 px-4 rounded shadow-lg z-30"
+        <button
+          onClick={goToNextMonth}
+          disabled={!canGoToNextMonth()}
+          className={`p-2 ${
+            canGoToNextMonth()
+              ? "text-gray-700 hover:bg-gray-200"
+              : "text-gray-400 cursor-not-allowed"
+          }`}
+        >
+          →
+        </button>
+      </div>
+
+      {/* Phần lịch */}
+      <div className="p-4">
+        <div className="grid grid-cols-7 gap-2">
+          {/* Hiển thị các ngày trong tuần */}
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+            <div key={day} className="text-center font-bold text-gray-700">
+              {day}
+            </div>
+          ))}
+          {/* Hiển thị các ô trống trước ngày đầu tiên của tháng */}
+          {emptyDays.map((_, index) => (
+            <div
+              key={`empty-${index}`}
+              className="text-center p-2 text-gray-400"
             >
-              Log In
-            </button>
-          </div>
-        )}
+              {""}
+            </div>
+          ))}
+          {/* Hiển thị các ngày trong tháng */}
+          {daysArray.map((day) => (
+            <div
+              key={day}
+              className="text-center p-2 rounded text-gray-900 hover:bg-gray-100 cursor-pointer"
+            >
+              {day}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
-}
+};
 
-export default DailyActivityCalendar;
+export default Calendar;

@@ -1,30 +1,27 @@
 const mongoose = require("mongoose");
 
-const userExerciseSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "UserAccount",
-    required: true,
-  },
-  exerciseId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Exercise",
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ["not-started", "completed"],
-    default: "not-started",
-  },
-  score: { type: Number, default: 0 },
-  answers: [
-    {
-      questionId: { type: mongoose.Schema.Types.ObjectId },
-      userAnswer: { type: String },
-      isCorrect: { type: Boolean },
+const userExercisesSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-  ],
-});
+    exerciseType: {
+      type: String,
+      enum: ["grammar", "vocabulary", "reading", "listening"],
+      required: true,
+    },
+    exerciseId: { type: mongoose.Schema.Types.ObjectId, required: true }, // ID của bài tập cụ thể
+    score: { type: Number, default: 0 },
+    progress: { type: Number, default: 0 }, // % hoàn thành
+    completed: { type: Boolean, default: false },
+  },
+  { timestamps: true }
+);
 
-const UserExercises = mongoose.model("UserExercises", userExerciseSchema);
-module.exports = UserExercises;
+module.exports = mongoose.model(
+  "UserExercise",
+  userExercisesSchema,
+  "user_exercises"
+);

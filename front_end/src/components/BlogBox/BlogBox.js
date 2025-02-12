@@ -1,90 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Để chuyển hướng người dùng đến bài viết chi tiết
-
-const BlogBox = ({ images, title, content, buttonText, onClick, blogLink }) => {
-  const [currentIndex, setCurrentIndex] = useState(1); // Bắt đầu từ phần tử ảo đầu tiên
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
-  // Tạo danh sách ảnh bao gồm phần tử ảo đầu và cuối
-  const extendedImages =
-    images.length > 1
-      ? [images[images.length - 1], ...images, images[0]] // Mảng mở rộng
-      : images; // Nếu chỉ có 1 ảnh, giữ nguyên
-
-  useEffect(() => {
-    if (images.length <= 1) return;
-
-    const interval = setInterval(() => {
-      handleNextSlide();
-    }, 4000); // Chuyển ảnh mỗi 4 giây
-
-    return () => clearInterval(interval); // Clear interval khi component unmount
-  }, [images]);
-
-  const handleNextSlide = () => {
-    if (images.length <= 1 || isTransitioning) return;
-    setIsTransitioning(true);
-    setCurrentIndex((prevIndex) => prevIndex + 1);
-  };
-
-  const handlePrevSlide = () => {
-    if (images.length <= 1 || isTransitioning) return;
-    setIsTransitioning(true);
-    setCurrentIndex((prevIndex) => prevIndex - 1);
-  };
-
-  const handleTransitionEnd = () => {
-    setIsTransitioning(false);
-    // Nếu ở phần tử ảo đầu hoặc cuối, quay lại phần tử thực
-    if (currentIndex === 0) {
-      setCurrentIndex(images.length); // Quay về ảnh cuối cùng thực
-    } else if (currentIndex === images.length + 1) {
-      setCurrentIndex(1); // Quay về ảnh đầu tiên thực
-    }
-  };
-
+const BlogBox = ({ image, title, description, link, new: isNew }) => {
   return (
-    <div
-      className="bg-white rounded-lg shadow-md overflow-hidden w-full max-w-xl border-2 border-blue-950"
-      style={{ height: "350px" }} // Đặt chiều cao cố định cho box hình chữ nhật
-    >
-      {/* Slider section */}
-      <div className="relative w-full h-48 overflow-hidden">
-        <div
-          className={`flex transition-transform duration-500 ease-in-out ${
-            isTransitioning ? "" : "transition-none"
-          }`}
-          style={{
-            transform: `translateX(${
-              images.length > 1 ? -currentIndex * 100 : 0
-            }%)`,
-          }}
-          onTransitionEnd={handleTransitionEnd}
-        >
-          {extendedImages.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={`Slide ${index}`}
-              className="w-full h-full object-cover flex-shrink-0"
-              style={{ flex: "0 0 100%" }}
-            />
-          ))}
+    <div className="flex items-stretch bg-[#191229] rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden max-w-xl ml-10 mt-10 relative">
+      {/* Tag "New" */}
+      {isNew && (
+        <div className="absolute top-4 -right-2 flex items-center">
+          <div className="relative bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-l">
+            New
+            {/* Phần dài ra phía sau */}
+            <div className="absolute top-1/2 -right-2 w-4 h-4 bg-red-500 transform -translate-y-1/2 rotate-45 z-0"></div>
+            {/* Phần móc ra đằng sau */}
+            <div className="absolute top-1/2 -right-4 w-2 h-2 bg-red-400 transform -translate-y-1/2 rotate-45 z-0"></div>
+          </div>
         </div>
+      )}
+
+      {/* Hình ảnh */}
+      <div className="w-1/3 flex-shrink-0">
+        <img src={image} alt={title} className="w-full h-full object-cover" />
       </div>
 
-      {/* Content section */}
-      <div className="p-6 flex flex-col justify-between h-full">
-        <h3 className="text-2xl font-semibold text-blue-950 mb-2">{title}</h3>
-        <p className="text-gray-600 text-sm mb-4">{content}</p>
-        <Link to={blogLink} className="block">
-          <button
-            onClick={onClick}
-            className="w-full bg-red-400 text-white font-semibold py-2 px-4 rounded-lg hover:bg-white hover:text-red-500 transition-all duration-300"
-          >
-            {buttonText}
-          </button>
-        </Link>
+      {/* Nội dung */}
+      <div className="p-6 w-2/3 flex flex-col justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-white mb-2">{title}</h2>
+          <p className="text-gray-300 text-sm line-clamp-3">{description}</p>
+        </div>
+        <a
+          href={link}
+          className="text-blue-400 hover:text-blue-500 text-sm font-semibold mt-4 inline-block"
+        >
+          Read more →
+        </a>
       </div>
     </div>
   );

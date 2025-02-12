@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLanguage } from "@fortawesome/free-solid-svg-icons";
 
 function Translate() {
   const [sourceText, setSourceText] = useState("");
@@ -38,9 +40,10 @@ function Translate() {
 
   return (
     <div className="min-h-screen  from-blue-100 via-white to-blue-50 flex items-center justify-center px-4">
-      <div className="bg-white border-4 border-purple-300 shadow-xl rounded-2xl p-8 w-full max-w-4xl">
+      <div className="bg-[#FFD43B] border-[3px] border-[#191229] rounded-2xl p-8 w-full max-w-4xl shadow-[0_10px_20px_rgba(0,0,0,0.3)] border-b-[10px]">
         <h1 className="text-4xl font-TranslateFont font-bold text-blue-950 text-center mb-8">
           Flourine Translate
+          <FontAwesomeIcon icon={faLanguage} className="ml-6" />
         </h1>
         <div className="flex flex-col gap-6">
           {/* Input Text Area */}
@@ -51,7 +54,7 @@ function Translate() {
                 From
               </label>
               <select
-                className="w-full p-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-300"
+                className="w-full p-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#302d45]"
                 value={sourceLang}
                 onChange={(e) => setSourceLang(e.target.value)}
               >
@@ -68,7 +71,7 @@ function Translate() {
                 setSourceLang(targetLang);
                 setTargetLang(temp);
               }}
-              className=" mt-7 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 hover:scale-105 transition transform"
+              className=" mt-7 bg-[#191229] text-white p-4 rounded-full shadow-lg hover:bg-[#302d45] hover:scale-105 transition transform"
             >
               Swap
             </button>
@@ -78,7 +81,7 @@ function Translate() {
                 To
               </label>
               <select
-                className="w-full p-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-300"
+                className="w-full p-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#302d45]"
                 value={targetLang}
                 onChange={(e) => setTargetLang(e.target.value)}
               >
@@ -90,7 +93,7 @@ function Translate() {
             </div>
           </div>
           <textarea
-            className="w-full p-5 text-lg border-2 rounded-xl shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-300"
+            className="w-full p-5 text-lg border-2 rounded-xl shadow-sm focus:outline-none focus:ring-4 focus:ring-[#302d45]"
             rows={5}
             placeholder="Enter text to translate..."
             value={sourceText}
@@ -100,14 +103,14 @@ function Translate() {
           {/* Translate Button */}
           <button
             onClick={handleTranslate}
-            className="w-full bg-blue-500 text-white py-3 rounded-xl shadow-lg hover:bg-blue-600 hover:shadow-xl transition text-xl font-semibold"
+            className="w-full bg-[#191229] text-white py-3 rounded-xl shadow-lg hover:bg-[#302d45] hover:shadow-xl transition text-xl font-semibold"
           >
             Translate
           </button>
 
           {/* Translated Text Output */}
           <div className="mt-1">
-            <div className="min-h-[150px] w-full p-4 bg-blue-50 border-2 rounded-xl text-gray-800 shadow-inner">
+            <div className="min-h-[150px] w-full p-4 bg-white border-2 rounded-xl text-gray-800 shadow-inner">
               {translatedText || "Your translated text will appear here..."}
             </div>
           </div>

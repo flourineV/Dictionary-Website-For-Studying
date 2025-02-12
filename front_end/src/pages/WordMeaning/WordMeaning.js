@@ -4,18 +4,19 @@ import SearchBar from "../../layouts/components/Search/Search";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVolumeHigh } from "@fortawesome/free-solid-svg-icons";
 import { addFlashcard } from "../../utils/flashcardApi";
+import { useSelector } from "react-redux";
 
 const WordMeaning = ({ wordData, error }) => {
   const { word } = useParams(); // Lấy từ khóa từ URL
   const navigate = useNavigate();
   const [searchWord, setSearchWord] = useState(word); // Trạng thái tìm kiếm
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Trạng thái đăng nhập
+  const user = useSelector((state) => state.user.user || null);
 
-  // Đồng bộ trạng thái từ localStorage khi component mount
   useEffect(() => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-    setIsLoggedIn(loggedIn);
-  }, []);
+    setIsLoggedIn(!!user);
+  }, [user]);
+
   useEffect(() => {
     setSearchWord(word); // Cập nhật trạng thái searchWord khi URL thay đổi
   }, [word]); // Chạy lại khi từ khóa trong URL thay đổi
@@ -37,7 +38,7 @@ const WordMeaning = ({ wordData, error }) => {
   const handleAddFlashcard = async (word, meaning) => {
     if (!isLoggedIn) return;
     try {
-      await addFlashcard(word, meaning); // Gọi API thêm flashcard
+      await addFlashcard(user._id, word, meaning); // Gọi API thêm flashcard
       alert(`Added "${word}" to your flashcards!`);
     } catch (err) {
       console.error(err);

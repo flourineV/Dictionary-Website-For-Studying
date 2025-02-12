@@ -2,7 +2,7 @@ const images = {
   logo: require("../images/logopro.png"),
   background: require("../images/searchSectionbg.png"),
   logoblack: require("../images/logoblack.png"),
-  wordbox: require("../images/wotd.jpg"),
+  wotd: require("../images/wotd.jpg"),
   study1box: require("../images/studymain1.jpg"),
   study2box: require("../images/studymain2.jpg"),
   study3box: require("../images/studymain3.jpg"),
@@ -12,6 +12,12 @@ const images = {
   exercises: require("../images/exercises.jpg"),
   studymaterials: require("../images/studymaterials.jpg"),
   writing: require("../images/writing.png"),
+  bgform: require("../images/bg-form.jpg"),
+  defaultavt: require("../images/defaultavt.jpg"),
+  introstudy: require("../images/introstudy.png"),
+  logormbg: require("../images/logormbg.png"),
+  searchIntro: require("../images/searchIntro.png"),
+  bodyintro: require("../images/bodyintro.jpg"),
 };
 
 export default images;

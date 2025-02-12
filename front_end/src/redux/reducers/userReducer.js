@@ -1,36 +1,40 @@
 const initialState = {
-  user: JSON.parse(localStorage.getItem("user")) || null, // Khôi phục người dùng từ localStorage nếu có
+  user: JSON.parse(localStorage.getItem("user")) || {}, // Thay vì null, dùng object rỗng
   token: localStorage.getItem("token") || null,
-  userId: JSON.parse(localStorage.getItem("user"))?._id || null, // Lấy userId từ user nếu có
 };
 
-export const userReducer = (state = initialState, action) => {
+const userReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "LOGIN":
-      // Khi login, cập nhật user, token và userId vào state và localStorage
-      localStorage.setItem("user", JSON.stringify(action.payload));
-      localStorage.setItem("token", action.token);
-      localStorage.removeItem("userId");
+    case "SIGN_IN_REQUEST":
+    case "SIGN_UP_REQUEST":
+      return { ...state, loading: true, error: null };
+
+    case "SIGN_IN_SUCCESS":
+    case "SIGN_UP_SUCCESS":
+      localStorage.setItem("userInfo", JSON.stringify(action.payload.user));
+      localStorage.setItem("token", action.payload.token);
       return {
         ...state,
-        user: action.payload,
-        token: action.token,
-        userId: action.payload._id,
+        user: { ...action.payload.user }, // Chỉ lưu user, không bọc thêm userInfo
+        token: action.payload.token,
       };
 
-    case "LOGOUT":
-      // Khi logout, xóa thông tin người dùng và token khỏi state và localStorage
-      localStorage.removeItem("user");
+    case "SIGN_IN_FAIL":
+    case "SIGN_UP_FAIL":
+      return { ...state };
+
+    case "SIGN_OUT":
+      localStorage.removeItem("userInfo");
       localStorage.removeItem("token");
-      localStorage.removeItem("userId");
       return {
         ...state,
-        user: null,
+        user: null, // Chỉ lưu user, không bọc thêm userInfo
         token: null,
-        userId: null,
       };
 
     default:
       return state;
   }
 };
+
+export default userReducer;

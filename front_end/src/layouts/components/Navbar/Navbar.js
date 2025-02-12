@@ -2,8 +2,8 @@ import config from "../../../config"; //config
 import { Link, useLocation } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
 import images from "../../../assets/images";
 import {
   FacebookIcon,
@@ -13,65 +13,20 @@ import {
 } from "../../../components/Icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faEarthAmericas,
-  faSignIn,
-  faSignOut,
-} from "@fortawesome/free-solid-svg-icons";
-import Login from "../SignInModal";
-import { logoutUser } from "../../../redux/actions/userActions";
-function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("English");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { signOutUser } from "../../../redux/actions/userActions";
 
+function Navbar() {
+  const user = useSelector((state) => state.user || null);
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const location = useLocation();
   const logoRef = useRef(null);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.setItem("isLoggedIn", false);
-    localStorage.removeItem("userId");
-    setIsLoggedIn(false);
-    setUser(null);
-    dispatch(logoutUser);
-    navigate("/");
-    window.location.reload();
-  };
-
-  useEffect(() => {
-    const loggedIn = localStorage.getItem("token");
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (loggedIn && storedUser) {
-      setIsLoggedIn(true);
-      setUser(storedUser);
-    }
-  }, []); // Chỉ chạy một lần khi component được render
-
-  const handleLoginSuccess = (userData) => {
-    setIsLoggedIn(true);
-    setUser(userData);
-    navigate("/");
-    localStorage.setItem("user", JSON.stringify(userData));
-    setIsModalOpen(false);
-  };
-
-  const isActive = (path) => location.pathname === path;
-
-  const handleLanguageChange = (event) => {
-    setSelectedLanguage(event.target.value);
-  };
 
   // Đóng dropdown khi click ra ngoài
   useEffect(() => {
@@ -107,151 +62,109 @@ function Navbar() {
       e.dataTransfer.setDragImage(logoElement, offsetX, offsetY);
     }
   };
+  const isActive = (path) => location.pathname === path;
+  const links = [
+    user
+      ? { name: "Dashboard", to: config.routes.dashboard }
+      : { name: "Home", to: config.routes.home },
+    { name: "Translate", to: config.routes.translate },
+    { name: "Study", to: config.routes.study },
+    { name: "Blog", to: config.routes.blog },
+  ];
+
+  const activeLink = links.find((link) => isActive(link.to));
+
+  const handleSignOut = () => {
+    dispatch(signOutUser());
+    navigate("/");
+  };
 
   return (
     <>
       <nav
-        className="fixed bg-blue-950 text-white shadow-md w-full"
+        className="fixed bg-[#191229] text-white shadow-md w-full"
         style={{ height: "3.5rem", zIndex: 48 }}
       >
         <div className="flex justify-between items-center h-full px-4">
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-8 relative">
+            {" "}
             <FontAwesomeIcon
               icon={faBars}
               className="fa-solid faBars w-6 h-6 cursor-pointer hover:text-gray-300 transition-all duration-200"
-              onClick={() => setMenuOpen(!menuOpen)} // Toggle the menu on click
+              onClick={() => setMenuOpen(!menuOpen)}
             />
-            <Link
-              to={config.routes.home}
-              className={`text-white font-bold text-lg hover:border-b-2 hover:border-green-600 ${
-                isActive(config.routes.home)
-                  ? "border-b-2 border-green-600 shadow-lg"
-                  : ""
-              }`}
-            >
-              Home
-            </Link>
-
-            <Link
-              to={config.routes.translate}
-              className={`text-white font-bold text-lg hover:border-b-2 border-green-600 ${
-                isActive(config.routes.translate)
-                  ? "border-b-2 border-green-600"
-                  : ""
-              }`}
-            >
-              Translate
-            </Link>
-            <Link
-              to={config.routes.study}
-              className={`text-white font-bold text-lg hover:border-b-2 border-green-600 ${
-                isActive(config.routes.study)
-                  ? "border-b-2 border-green-600"
-                  : ""
-              }`}
-            >
-              Study
-            </Link>
-            <Link
-              to={config.routes.blog}
-              className={`text-white font-bold text-lg hover:border-b-2 border-green-600 ${
-                isActive(config.routes.blog)
-                  ? "border-b-2 border-green-600"
-                  : ""
-              }`}
-            >
-              Blog
-            </Link>
-            <Link
-              to={config.routes.shops}
-              className={`text-white font-bold text-lg hover:border-b-2 border-green-600 ${
-                isActive(config.routes.shops)
-                  ? "border-b-2 border-green-600"
-                  : ""
-              }`}
-            >
-              Shops
-            </Link>
+            {links.map((link) => (
+              <Link
+                key={link.name}
+                to={link.to}
+                className={`text-white font-bold text-lg relative`}
+                style={isActive(link.to) ? { color: "yellow" } : {}}
+              >
+                {link.name}
+                {isActive(link.to) && (
+                  <motion.div
+                    layoutId="underline" //id link
+                    className="absolute bottom-[-3px] left-0 top-[40px] h-1 bg-blue-500 w-full"
+                    style={{
+                      boxShadow:
+                        "0 2px 5px rgba(0, 102, 255, 1), 0 -6px 12px rgba(0, 128, 255, 0.8)",
+                      borderRadius: "15px",
+                    }}
+                  />
+                )}
+              </Link>
+            ))}
           </div>
 
           {/* Navbar items */}
           <div className="flex space-x-6 items-center">
             {/* Social Media Icons */}
-            <div className="flex space-x-4">
+            <div className="relative flex space-x-4 -right-3">
               <YoutubeIcon className="cursor-pointer hover:text-gray-300 transition-all duration-200" />
               <FacebookIcon className="cursor-pointer hover:text-gray-300 transition-all duration-200" />
               <InstagramIcon className="cursor-pointer hover:text-gray-300 transition-all duration-200" />
               <GithubIcon className="cursor-pointer hover:text-gray-300 transition-all duration-200" />
             </div>
-
-            {/* Language Selector */}
-            <div className="relative">
-              <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
-                <FontAwesomeIcon
-                  icon={faEarthAmericas}
-                  className="fa-solid fa-earth-americas w-6 h-6"
-                />
-              </div>
-              <select
-                value={selectedLanguage}
-                onChange={handleLanguageChange}
-                className="appearance-none bg-red-400 text-white font-semibold py-2 px-4 rounded-lg hover:bg-white hover:text-red-500 transition-all duration-300"
+            {user && (
+              <div
+                className="relative flex items-center space-x-3 hover:bg-gray-500 transition-all duration-200 px-3 py-1 rounded-lg -right-3 cursor-pointer"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
               >
-                <option value="English">English</option>
-                <option value="Vietnamese">Vietnamese</option>
-                <option value="Spanish">Spanish</option>
-                <option value="French">French</option>
-              </select>
-            </div>
-            {/*display user info hoặc sign in button */}
-            <div className="flex items-center space-x-4">
-              {isLoggedIn ? (
-                <div
-                  className="relative cursor-pointer flex items-center space-x-2 hover:bg-gray-700 p-2 rounded-lg"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                >
-                  <img
-                    src={
-                      user?.avatar ||
-                      "https://i.pinimg.com/736x/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg"
-                    }
-                    alt="User Avatar"
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <p className="text-white hover:text-gray-300">
-                    {user?.name || user?.username}
-                  </p>
-
-                  {/* Dropdown Menu */}
-                  {dropdownOpen && (
-                    <div
-                      ref={dropdownRef}
-                      className="absolute right-0 top-12 bg-white text-black rounded-lg shadow-md w-48"
-                    >
-                      <Link
-                        to={`/profile/${user?.id}`} // Dẫn đến trang profile người dùng
-                        className="block px-4 py-2 text-sm hover:bg-gray-200 rounded-lg"
-                      >
-                        Profile
-                      </Link>
-                      <button
-                        onClick={logout}
-                        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-200 rounded-lg"
-                      >
-                        Sign Out
-                      </button>
+                <span className="text-white font-semibold">{user.name}</span>{" "}
+                {/* Hiển thị tên user */}
+                <img
+                  src={user.avatar || images.defaultavt} // Avatar user
+                  alt="User Avatar"
+                  className="w-10 h-10 rounded-full cursor-pointer border-2 border-white"
+                />
+                {/* Dropdown Menu */}
+                {dropdownOpen && (
+                  <div
+                    ref={dropdownRef}
+                    className="absolute right-0 top-14 w-48 bg-white text-black shadow-lg rounded-lg"
+                  >
+                    <div className="p-2 border-b">
+                      <p className="font-semibold">{user.name}</p>
+                      <p className="text-sm text-gray-500">{user.email}</p>
                     </div>
-                  )}
-                </div>
-              ) : (
-                <button
-                  onClick={openModal}
-                  className="bg-red-400 text-white font-semibold py-2 px-4 rounded-lg hover:bg-white hover:text-red-500 transition-all duration-300"
-                >
-                  Sign In
-                </button>
-              )}
-            </div>
+                    <ul className="py-2">
+                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                        <Link to="/profile">Profile</Link>
+                      </li>
+                      <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                        <Link to="/settings">Settings</Link>
+                      </li>
+                      <li
+                        className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-red-600"
+                        onClick={handleSignOut}
+                      >
+                        Sign out
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -299,10 +212,6 @@ function Navbar() {
                   Chatbot
                 </div>
                 <div className="w-full h-px bg-gray-300"></div>
-                <div className="text-lg font-semibold text-black mt-4">
-                  Shop
-                </div>
-                <div className="w-full h-px bg-gray-300"></div>
               </div>
             </div>
           </div>
@@ -315,12 +224,6 @@ function Navbar() {
           ></div>
         )}
       </nav>
-      {isModalOpen && (
-        <Login
-          closeModal={() => setIsModalOpen(false)}
-          onLoginSuccess={handleLoginSuccess}
-        />
-      )}
     </>
   );
 }
