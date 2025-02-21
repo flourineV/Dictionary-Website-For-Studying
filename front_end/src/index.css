@@ -142,3 +142,7 @@ input::-webkit-contacts-auto-fill-button {
 .wave-effect {
   clip-path: polygon(0 0, 100% 0, 80% 100%, 0% 100%);
 }
+
+.clip-circle {
+  clip-path: circle(60% at 50% 50%);
+}
