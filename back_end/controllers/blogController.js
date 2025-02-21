@@ -1,21 +1,28 @@
 const Blog = require("../models/blog");
 
-// Lấy danh sách blog
 exports.getAllBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find()
-      .populate("author", "name")
-      .sort({ createdAt: -1 });
+      .populate("author", "name") // Populate thông tin author
+      .populate("comments.user", "name") // Populate user trong comments
+      .populate("ratings.user", "name"); // Populate user trong ratings
+
+    if (!blogs || blogs.length === 0)
+      return res.status(404).json({ error: "No blogs found" });
+
     res.json(blogs);
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-// Lấy một blog theo ID
 exports.getBlogById = async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id).populate("author", "name");
+    const blog = await Blog.findById(req.params.id)
+      .populate("author", "name") // Populate thông tin author
+      .populate("comments.user", "name") // Populate user trong comments
+      .populate("ratings.user", "name"); // Populate user trong ratings
+
     if (!blog) return res.status(404).json({ error: "Blog not found" });
     res.json(blog);
   } catch (err) {
@@ -23,15 +30,23 @@ exports.getBlogById = async (req, res) => {
   }
 };
 
-// Tạo blog mới
 exports.createBlog = async (req, res) => {
   try {
-    const { title, introduction, content, author } = req.body;
-    if (!title || !introduction || !content || !author) {
+    // Lấy dữ liệu từ body của request
+    const { title, introduction, content, author, image } = req.body;
+
+    // Kiểm tra xem tất cả các trường có đầy đủ không
+    if (!title || !introduction || !content || !author || !image) {
       return res.status(400).json({ error: "All fields are required" });
     }
-    const newBlog = new Blog({ title, introduction, content, author });
+
+    // Tạo mới một blog
+    const newBlog = new Blog({ title, introduction, content, author, image });
+
+    // Lưu blog vào database
     await newBlog.save();
+
+    // Trả lại blog vừa được tạo
     res.status(201).json(newBlog);
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
@@ -41,10 +56,20 @@ exports.createBlog = async (req, res) => {
 // Cập nhật blog
 exports.updateBlog = async (req, res) => {
   try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+
+    // Kiểm tra quyền sở hữu blog
+    if (blog.author.toString() !== req.user.id && !req.user.isAdmin) {
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to update this blog" });
+    }
+
+    // Cập nhật blog
     const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    if (!updatedBlog) return res.status(404).json({ error: "Blog not found" });
     res.json(updatedBlog);
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
@@ -76,6 +101,8 @@ exports.addComment = async (req, res) => {
 
     blog.comments.push({ user: userId, text });
     await blog.save();
+
+    // Trả về blog sau khi thêm comment
     res.json(blog);
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });

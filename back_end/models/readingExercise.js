@@ -2,13 +2,18 @@ const mongoose = require("mongoose");
 
 const readingExerciseSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
-    passage: { type: String, required: true }, // Đoạn văn bản reading
-    questions: [
+    category: { type: String, required: true }, // "Short Passage" | "Long Passage"
+    tests: [
       {
-        questionText: { type: String, required: true },
-        options: [{ type: String }], // Nếu là trắc nghiệm
-        correctAnswer: { type: String, required: true }, // Nếu là điền từ, đây là đáp án đúng
+        name: { type: String, required: true }, // "Test 1", "Test 2"
+        passage: { type: String, required: true }, // Đoạn văn bản cho bài test
+        questions: [
+          {
+            questionText: { type: String, required: true },
+            options: [{ type: String }], // Nếu là trắc nghiệm
+            correctAnswer: { type: String, required: true }, // Nếu là điền từ, đây là đáp án đúng
+          },
+        ],
       },
     ],
   },

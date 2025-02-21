@@ -1,14 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import images from "../../assets/images";
 import { useParams, useNavigate } from "react-router-dom";
 import SearchBar from "../../layouts/components/Search/Search";
 import Card from "../../components/Card";
-import {
-  faChevronCircleLeft,
-  faChevronCircleRight,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Calendar from "../../components/Calendar";
+import Leaderboard from "../../components/LeaderBoard";
 
 const cardData = [
   {
@@ -31,8 +28,20 @@ const cardData = [
   },
   {
     image: images.wotd,
-    title: "Chatbot",
-    description: "Ask AI for English help.",
+    title: "Reading Tools",
+    description: "Tools to improve your reading skills.",
+    tags: [1, 2, 3],
+  },
+  {
+    image: images.wotd,
+    title: "Audio Dictionary",
+    description: "Listen to word pronunciation.",
+    tags: [1, 2, 3],
+  },
+  {
+    image: images.wotd,
+    title: "Learning Tools",
+    description: "Interactive learning tools.",
     tags: [1, 2, 3],
   },
 ];
@@ -41,8 +50,7 @@ const Dashboard = () => {
   const { word } = useParams();
   const navigate = useNavigate();
   const [searchWord, setSearchWord] = useState(word || "");
-  const [startIndex1, setStartIndex1] = useState(0); // State cho dòng card đầu tiên
-  const [startIndex2, setStartIndex2] = useState(0); // State cho dòng card thứ hai
+  const logoRef = useRef(null);
 
   const handleSearch = () => {
     if (searchWord.trim()) {
@@ -50,62 +58,64 @@ const Dashboard = () => {
     }
   };
 
-  // Hàm xử lý nút điều hướng cho dòng card đầu tiên
-  const handleNext1 = () => {
-    if (startIndex1 < cardData.length - 2) {
-      setStartIndex1(startIndex1 + 1);
-    }
-  };
-
-  const handlePrev1 = () => {
-    if (startIndex1 > 0) {
-      setStartIndex1(startIndex1 - 1);
-    }
-  };
-
-  // Hàm xử lý nút điều hướng cho dòng card thứ hai
-  const handleNext2 = () => {
-    if (startIndex2 < cardData.length - 2) {
-      setStartIndex2(startIndex2 + 1);
-    }
-  };
-
-  const handlePrev2 = () => {
-    if (startIndex2 > 0) {
-      setStartIndex2(startIndex2 - 1);
-    }
+  const handleLogoClick = () => {
+    navigate("/dashboard");
   };
 
   return (
     <div className="pt-1">
-      <div className="w-screen h-96 bg-cyan-300 bg-opacity-80 flex items-center justify-center rounded-lg shadow-lg">
-        <SearchBar
-          word={searchWord}
-          setWord={setSearchWord}
-          handleSearch={handleSearch}
-        />
+      {/* Phần header với gradient và logo */}
+      <div className="w-screen h-96 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-opacity-80 grid grid-cols-4 items-center justify-center rounded-lg shadow-lg px-8">
+        {/* Cột 1: Logo */}
+        <div
+          className="relative flex flex-col items-end cursor-pointer"
+          onClick={handleLogoClick}
+        >
+          <img
+            src={images.logoblack}
+            alt="Logo"
+            className="object-contain w-72 h-72 transition-opacity duration-300 hover:opacity-70"
+          />
+          {/* Gạch ngang và chữ */}
+          <div className="absolute bottom-14 right-5 flex flex-col items-center">
+            <div className="w-32 h-1 bg-yellow-500"></div> {/* Gạch ngang */}
+            <p className="text-black text-lg font-thin mt-2 text-center">
+              Happy to learn 😊
+            </p>
+          </div>
+        </div>
+
+        {/* Cột 2 & 3: SearchBar */}
+        <div className="col-span-2 flex justify-center">
+          <SearchBar
+            word={searchWord}
+            setWord={setSearchWord}
+            handleSearch={handleSearch}
+          />
+        </div>
+
+        {/* Các hình khối trang trí */}
+        <div className="w-24 h-24 bg-yellow-400 absolute right-0 mt-72"></div>
+        <div className="w-24 h-10 bg-blue-400 absolute right-24 mt-[344px]"></div>
+        <div className="w-10 h-24 bg-blue-500 absolute left-0 mt-[100px]"></div>
+        <div className="w-24 h-24 bg-yellow-400 absolute left-0 mt-72"></div>
+        <div className="w-14 h-14 bg-green-400 rounded-full absolute -left-8 -mt-64"></div>
+        <div className="w-10 h-10 bg-green-500 rounded-full absolute right-28 mt-64"></div>
+        <div className="w-64 h-7 bg-pink-300 absolute right-0 mt-20"></div>
+        <div className="w-10 h-10 bg-purple-400 rounded-full absolute left-28 mt-80"></div>
       </div>
 
-      {/* Dòng card đầu tiên */}
-      <div className="relative mt-10 flex items-center justify-start ml-40">
-        {/* Nút trái */}
-        <button
-          onClick={handlePrev1}
-          disabled={startIndex1 === 0}
-          className="w-12 h-12 absolute -left-16 z-10 p-2 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-        >
-          <FontAwesomeIcon icon={faChevronCircleLeft} className="w-8 h-8" />
-        </button>
+      {/* Phần chính: Flexbox chia thành 2/3 và 1/3 */}
 
-        {/* Danh sách Card */}
-        <div className="w-2/3 flex overflow-hidden relative">
-          <motion.div
-            className="flex gap-4"
-            animate={{ x: `-${startIndex1 * 54}%` }} // Sử dụng startIndex1
-            transition={{ type: "tween", duration: 0.4 }}
-          >
+      {/* Phần chính: Flexbox chia thành 2/3 và 1/3 */}
+      <div className="mt-10 pl-20 flex w-screen">
+        {/* Phần 2/3 bên trái: Các card */}
+        <div className="flex-1 w-2/3">
+          <div className="grid grid-cols-3 gap-10">
+            {" "}
+            {/* 3 card mỗi hàng */}
             {cardData.map((card, index) => (
-              <div key={index} className="w-[50%] flex-shrink-0">
+              <motion.div key={index} className="duration-300 hover:scale-105">
                 <Card
                   image={card.image}
                   title={card.title}
@@ -113,61 +123,18 @@ const Dashboard = () => {
                   tags={card.tags}
                   links
                 />
-              </div>
+              </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
 
-        {/* Nút phải */}
-        <button
-          onClick={handleNext1}
-          disabled={startIndex1 >= cardData.length - 2}
-          className="w-12 h-12 absolute right-64 z-10 p-2 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-        >
-          <FontAwesomeIcon icon={faChevronCircleRight} className="w-8 h-8" />
-        </button>
-      </div>
-
-      {/* Dòng card thứ hai */}
-      <div className="relative mt-12 flex items-center justify-center">
-        {/* Nút trái */}
-        <button
-          onClick={handlePrev2}
-          disabled={startIndex2 === 0}
-          className="absolute left-36 z-10 p-2 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-        >
-          <FontAwesomeIcon icon={faChevronCircleLeft} size="lg" />
-        </button>
-
-        {/* Danh sách Card */}
-        <div className="w-2/3 flex overflow-hidden relative">
-          <motion.div
-            className="flex gap-6"
-            animate={{ x: `-${startIndex2 * 53}%` }} // Sử dụng startIndex2
-            transition={{ type: "tween", duration: 0.4 }}
-          >
-            {cardData.map((card, index) => (
-              <div key={index} className="w-[50%] flex-shrink-0">
-                <Card
-                  image={card.image}
-                  title={card.title}
-                  description={card.description}
-                  tags={card.tags}
-                  links
-                />
-              </div>
-            ))}
-          </motion.div>
+        {/* Phần 1/3 bên phải: Calendar và Leaderboard */}
+        <div className="flex w-1/3 space-y-8 justify-center">
+          <div className="flex flex-col space-y-8">
+            <Calendar />
+            <Leaderboard />
+          </div>
         </div>
-
-        {/* Nút phải */}
-        <button
-          onClick={handleNext2}
-          disabled={startIndex2 >= cardData.length - 2}
-          className="absolute right-36 z-10 p-2 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-        >
-          <FontAwesomeIcon icon={faChevronCircleRight} size="lg" />
-        </button>
       </div>
     </div>
   );

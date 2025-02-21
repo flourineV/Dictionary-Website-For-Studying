@@ -1,6 +1,5 @@
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || {}, // Thay vì null, dùng object rỗng
-  token: localStorage.getItem("token") || null,
 };
 
 const userReducer = (state = initialState, action) => {
@@ -11,25 +10,31 @@ const userReducer = (state = initialState, action) => {
 
     case "SIGN_IN_SUCCESS":
     case "SIGN_UP_SUCCESS":
-      localStorage.setItem("userInfo", JSON.stringify(action.payload.user));
-      localStorage.setItem("token", action.payload.token);
+      const userData = {
+        user: action.payload.user, // 🟢 Đưa user vào cấp dưới
+        token: action.payload.token, // 🟢 Đưa token vào cùng cấp với user
+      };
+
+      // Lưu user và token vào localStorage với format phân cấp
+      localStorage.setItem("user", JSON.stringify(userData));
+
       return {
         ...state,
-        user: { ...action.payload.user }, // Chỉ lưu user, không bọc thêm userInfo
-        token: action.payload.token,
+        user: userData, // 🟢 Giữ cấu trúc phân cấp
       };
 
     case "SIGN_IN_FAIL":
     case "SIGN_UP_FAIL":
-      return { ...state };
+      return { ...state, loading: false, error: action.payload };
 
     case "SIGN_OUT":
-      localStorage.removeItem("userInfo");
+      localStorage.removeItem("user");
       localStorage.removeItem("token");
       return {
         ...state,
-        user: null, // Chỉ lưu user, không bọc thêm userInfo
-        token: null,
+        user: {
+          user: null,
+        }, // Chỉ lưu user, không bọc thêm userInfo
       };
 
     default:

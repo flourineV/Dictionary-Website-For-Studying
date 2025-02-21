@@ -23,6 +23,7 @@ const flashcardsRoutes = require("./routes/flashcardsRoutes.js");
 const searchRoutes = require("./routes/searchRoutes");
 const blogRoutes = require("./routes/blogRoutes.js");
 const exerciseRoutes = require("./routes/exerciseRoutes.js");
+const progressRoutes = require("./routes/progressRoutes.js");
 
 connectDB();
 loadWords();
@@ -33,8 +34,9 @@ app.use("/api/user", userRoutes);
 app.post("/translate", translateRoutes);
 app.use("/api/flashcards", flashcardsRoutes);
 app.use("/search", searchRoutes);
-app.use("/blog", blogRoutes);
+app.use("/api", blogRoutes);
 app.use("/api/exercises", exerciseRoutes);
+app.use("/api", progressRoutes);
 
 const Port = process.env.PORT;
 app.listen(Port, () => {

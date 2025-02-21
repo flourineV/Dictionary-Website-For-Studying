@@ -37,12 +37,7 @@ const AuthForm = () => {
       }
 
       localStorage.setItem("userInfo", JSON.stringify(userData));
-
-      if (userData.user.role === "admin") {
-        navigate("/dashboard");
-      } else {
-        navigate("/dashboard");
-      }
+      navigate("/dashboard");
     } catch (error) {
       console.error("Login failed", error);
     }
@@ -51,7 +46,7 @@ const AuthForm = () => {
   const handleSignUp = async () => {
     try {
       await dispatch(signUpUser(formData));
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Sign up failed", error);
     }

@@ -2,13 +2,17 @@ const mongoose = require("mongoose");
 
 const vocabularyExerciseSchema = new mongoose.Schema({
   category: String, // Ví dụ: "Synonyms", "Antonyms", "Phrasal Verbs"
-  difficulty: String, // "easy", "medium", "hard"
-  questions: [
+  subcategories: [
     {
-      questionText: String,
-      type: { type: String, enum: ["multiple-choice", "fill-in-the-blank"] }, // Trắc nghiệm hoặc điền từ
-      options: [String], // Chỉ có khi là trắc nghiệm
-      correctAnswer: String,
+      name: String, // Ví dụ: "Present Simple", "Past Simple"
+      difficulty: String, // "easy", "medium", "hard"
+      questions: [
+        {
+          questionText: String,
+          options: [String],
+          correctAnswer: String,
+        },
+      ],
     },
   ],
 });

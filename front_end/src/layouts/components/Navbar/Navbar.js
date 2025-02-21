@@ -17,7 +17,7 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { signOutUser } from "../../../redux/actions/userActions";
 
 function Navbar() {
-  const user = useSelector((state) => state.user || null);
+  const user = useSelector((state) => state.user.user || null);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -69,7 +69,7 @@ function Navbar() {
       : { name: "Home", to: config.routes.home },
     { name: "Translate", to: config.routes.translate },
     { name: "Study", to: config.routes.study },
-    { name: "Blog", to: config.routes.blog },
+    { name: "Blog", to: config.routes.blog.blogs },
   ];
 
   const activeLink = links.find((link) => isActive(link.to));
@@ -154,6 +154,16 @@ function Navbar() {
                       <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
                         <Link to="/settings">Settings</Link>
                       </li>
+
+                      {/* 🟢 Nếu là admin, hiển thị thêm mục "Create Exercise" */}
+                      {user.role === "admin" && (
+                        <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-blue-600">
+                          <Link to="/admin/create-exercise">
+                            Create Exercise
+                          </Link>
+                        </li>
+                      )}
+
                       <li
                         className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-red-600"
                         onClick={handleSignOut}

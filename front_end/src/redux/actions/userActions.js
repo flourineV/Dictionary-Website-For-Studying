@@ -16,7 +16,7 @@ export const signInUser = (userData) => async (dispatch) => {
     dispatch({ type: SIGN_IN_SUCCESS, payload: data });
 
     // Lưu user vào localStorage
-    localStorage.setItem("userInfo", JSON.stringify(data));
+    localStorage.setItem("user", JSON.stringify(data));
 
     return data;
   } catch (error) {
@@ -41,7 +41,7 @@ export const signUpUser = (userData) => async (dispatch) => {
     dispatch({ type: SIGN_IN_SUCCESS, payload: loggedInUser });
 
     // Lưu vào localStorage
-    localStorage.setItem("userInfo", JSON.stringify(loggedInUser));
+    localStorage.setItem("user", JSON.stringify(loggedInUser));
 
     return loggedInUser;
   } catch (error) {
