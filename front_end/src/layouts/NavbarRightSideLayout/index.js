@@ -23,14 +23,17 @@ const NavbarRightSideLayout = ({ children }) => {
   };
 
   return (
-    <div>
+    <div className="w-screen bg-black">
       <div className="top-0 fixed z-50">
         <Navbar isLoggedIn={isLoggedIn} logout={handleLogout} />
       </div>
-      <div className="flex w-screen container mx-auto mt-28">
+      <div className="mt-12 pl-20 flex w-screen">
+        {/* Phần 2/3 bên trái: Các card */}
         <div className="flex-1 w-2/3">{children}</div>
-        <div className="flex w-1/3 space-y-8 justify-end">
-          <div className="flex flex-col space-y-14">
+
+        {/* Phần 1/3 bên phải: Calendar và Leaderboard */}
+        <div className="mb-10 mt-10 flex w-1/3 space-y-8 justify-center">
+          <div className="flex flex-col space-y-8">
             <Calendar />
             <LeaderBoard />
           </div>

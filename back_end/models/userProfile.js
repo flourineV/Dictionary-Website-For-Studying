@@ -46,7 +46,17 @@ const UserProfileSchema = new mongoose.Schema({
     type: Number,
     default: 0, // Số từ đã học
   },
+  country: {
+    // Thêm trường quốc gia
+    type: String,
+    maxlength: 100, // Độ dài tối đa của tên quốc gia
+    default: "Unknown", // Giá trị mặc định nếu không có thông tin
+  },
 });
 
-const UserProfile = mongoose.model("UserProfile", UserProfileSchema);
+const UserProfile = mongoose.model(
+  "UserProfile",
+  UserProfileSchema,
+  "user_profile"
+);
 module.exports = UserProfile;

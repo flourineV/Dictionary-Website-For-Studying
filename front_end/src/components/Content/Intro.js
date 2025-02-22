@@ -13,12 +13,12 @@ const DictionaryIntro = () => {
             {" "}
             {/* Removed -ml-10 */}
             <h1 className="text-4xl font-bold mb-4">
-              Welcome to TheFlourine Dictionary🚀
+              Welcome to TheFlourine Dictionary 🚀
             </h1>
-            <h2 className="text-2xl mb-4">
+            <h2 className="text-2xl font-light mb-4">
               Your ultimate English Learning Companion!
             </h2>
-            <p className="text-lg leading-relaxed text-justify mt-10">
+            <p className="text-lg font-light leading-relaxed text-justify mt-10">
               {introductionText}
             </p>
           </div>

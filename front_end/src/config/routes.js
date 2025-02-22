@@ -14,6 +14,7 @@ const routes = {
   exercises: "/exercises",
   userpage: "/user",
   adminpage: "/admin",
+  profile: "/profile/:userId",
 
   // 🟢 Routes cho Grammar & Vocabulary
   exercises: {

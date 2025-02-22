@@ -27,6 +27,7 @@ import ExerciseDynamicPage from "../pages/ExerciseDynamicPage/ExerciseDynamicPag
 import ExerciseResultPage from "../pages/ExerciseResultPage/ExerciseResultPage.js";
 import AdminCreateExercisePage from "../pages/AdminCreateExercisePage/AdminCreateExercisePage.js";
 import BlogDetail from "../pages/BlogDetail/BlogDetail.js";
+import Profile from "../pages/Profile/Profile.js";
 
 //publicRoutes
 const publicRoutes = [
@@ -46,11 +47,15 @@ const publicRoutes = [
     component: Study,
     layout: NavbarRightSideLayout,
   },
-  { path: config.routes.blog.blogs, component: Blog, layout: NavbarOnly },
+  {
+    path: config.routes.blog.blogs,
+    component: Blog,
+    layout: NavbarRightSideLayout,
+  },
   {
     path: config.routes.blog.blogDetail,
     component: BlogDetail,
-    layout: NavbarOnly,
+    layout: NavbarRightSideLayout,
   },
   {
     path: config.routes.wordmeaning,
@@ -101,6 +106,11 @@ const publicRoutes = [
   {
     path: "/admin/create-exercise",
     component: AdminCreateExercisePage,
+    layout: NavbarOnly,
+  },
+  {
+    path: config.routes.profile,
+    component: Profile,
     layout: NavbarOnly,
   },
 ];

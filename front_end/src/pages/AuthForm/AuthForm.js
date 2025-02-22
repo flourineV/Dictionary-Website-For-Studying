@@ -6,7 +6,7 @@ import {
   faGooglePlusG,
 } from "@fortawesome/free-brands-svg-icons";
 
-import bgform from "../../assets//images/bg-form.jpg";
+import bgform from "../../assets/images/lofitrang.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import { signInUser, signUpUser } from "../../redux/actions/userActions";
 import { useNavigate } from "react-router-dom";

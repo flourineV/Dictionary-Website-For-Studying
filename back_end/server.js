@@ -24,6 +24,7 @@ const searchRoutes = require("./routes/searchRoutes");
 const blogRoutes = require("./routes/blogRoutes.js");
 const exerciseRoutes = require("./routes/exerciseRoutes.js");
 const progressRoutes = require("./routes/progressRoutes.js");
+const profileRoutes = require("./routes/profile.js");
 
 connectDB();
 loadWords();
@@ -37,6 +38,7 @@ app.use("/search", searchRoutes);
 app.use("/api", blogRoutes);
 app.use("/api/exercises", exerciseRoutes);
 app.use("/api", progressRoutes);
+app.use("/api", profileRoutes);
 
 const Port = process.env.PORT;
 app.listen(Port, () => {

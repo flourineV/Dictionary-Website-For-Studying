@@ -7,6 +7,9 @@ const Leaderboard = () => {
   const players = [
     { name: "Player 1", score: 1200 },
     { name: "Player 2", score: 1100 },
+    { name: "Player 1", score: 1200 },
+    { name: "Player 2", score: 1100 },
+    { name: "Player 1", score: 1200 },
   ];
 
   const studyImageArray = [
@@ -18,10 +21,12 @@ const Leaderboard = () => {
   const [selectedTab, setSelectedTab] = useState(1); // Mặc định chọn "Top 1"
 
   return (
-    <div className="bg-gray-100 rounded-t-[25px] shadow-lg text-black w-[325px]">
+    <div className="bg-[#191229] rounded-t-[25px] rounded-b-[25px] shadow-lg text-black w-[325px] h-[680px]">
       {/* Hình chữ nhật dưới tiêu đề */}
       <div className="h-[350px] bg-gradient-to-r from-purple-700 via-blue-800 to-indigo-900 mb-6 rounded-t-[25px] rounded-b-[55px] overflow-hidden">
-        <h2 className="text-3xl font-light pt-7 text-center">LEADERBOARD</h2>
+        <h2 className="text-3xl font-light pt-7 text-center text-white">
+          LEADERBOARD
+        </h2>
 
         {/* Thanh ngang với 3 mục */}
         <div className="mr-3 ml-3 mt-5 relative flex justify-between items-center mb-6 bg-blue-950 bg-opacity-60 rounded-[50px] h-[50px]">
@@ -53,6 +58,9 @@ const Leaderboard = () => {
                 className="w-full h-full object-cover object-center rounded-full"
               />
             </div>{" "}
+            <div className="z-20 absolute top-[100px] text-[#FFD700] font-bold text-[17px]">
+              Thúy Vy
+            </div>
             {/* Hình tròn nhỏ */}
             <div className="absolute w-40 h-40 rounded-full bg-blue-950 opacity-20"></div>{" "}
             {/* Hình tròn lớn, không bị tràn */}
@@ -74,6 +82,9 @@ const Leaderboard = () => {
               />
             </div>{" "}
             {/* Hình tròn trung bình */}
+            <div className="z-20 absolute top-[156px] text-[#FFD700] font-bold text-[19px]">
+              Tuấn
+            </div>
             <div className="absolute w-56 h-56 rounded-full bg-blue-950 opacity-35"></div>{" "}
             {/* Hình tròn lớn, không bị tràn */}
           </div>
@@ -91,6 +102,9 @@ const Leaderboard = () => {
               />
             </div>{" "}
             {/* Hình tròn nhỏ */}
+            <div className="z-20 text-center absolute top-[100px] text-[#FFD700] font-bold text-[17px] break-words">
+              Bách Nguyên
+            </div>
             <div className="absolute w-40 h-40 rounded-full bg-blue-950 opacity-50"></div>{" "}
             {/* Hình tròn lớn, không bị tràn */}
           </div>
@@ -102,10 +116,10 @@ const Leaderboard = () => {
         {players.map((player, index) => (
           <div
             key={index}
-            className="flex justify-between items-center p-4 bg-pink-300 bg-opacity-20 rounded-[25px] backdrop-blur-sm"
+            className="flex justify-between items-center p-2 bg-[#290d61]  rounded-[25px] backdrop-blur-sm text-white"
           >
-            <span className="font-medium text-lg">{player.name}</span>
-            <span className="text-lg font-semibold">{player.score} pts</span>
+            <span className="font-light text-lg">{player.name}</span>
+            <span className="text-lg font-bold">{player.score}</span>
           </div>
         ))}
       </div>

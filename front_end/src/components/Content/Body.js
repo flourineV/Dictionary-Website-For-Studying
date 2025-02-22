@@ -74,7 +74,7 @@ const Body = () => {
           {items.map((item, index) => (
             <motion.div
               key={index}
-              className="p-4  rounded-xl cursor-pointer shadow-lg hover:bg-yellow-200  bg-yellow-100 transition-all"
+              className="p-4 rounded-xl cursor-pointer "
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}

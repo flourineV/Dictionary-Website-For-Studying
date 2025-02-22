@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import images from "../../assets/images";
+import AudioPlayer from "../AudioPlayer/AudioPlayer";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [hoveredDay, setHoveredDay] = useState(null); // 🟢 Lưu ngày đang hover
-
+  const [imageSrc, setImageSrc] = useState(images.lofitrang);
+  const [curIcon, setCurIcon] = useState(faSun);
   const currentYear = new Date().getFullYear();
   const today = new Date().getDate();
   const currentMonth = new Date().getMonth();
@@ -72,30 +76,51 @@ const Calendar = () => {
     setRandomWords(newWords);
   }, [wordList, today]);
 
+  useEffect(() => {
+    const currentHour = new Date().getHours(); // Lấy giờ hiện tại
+    if (currentHour >= 12) {
+      setImageSrc(images.lofiden); // Nếu sau 12h trưa, dùng lofi đen
+    }
+  }, []); // Dùng useEffect để kiểm tra khi component mount
+
+  useEffect(() => {
+    const currentHour = new Date().getHours(); // Lấy giờ hiện tại
+    if (currentHour >= 12) {
+      setCurIcon(faMoon); // Nếu sau 12h trưa, dùng faMoon
+    } else {
+      setCurIcon(faSun); // Trước 12h trưa, dùng faSun
+    }
+  }, []);
+
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="bg-[#2A2A2A] rounded-lg shadow-md overflow-hidden">
       <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
+        <div className="absolute text-yellow-400 -mt-36 ml-[330px] text-[60px]">
+          <FontAwesomeIcon icon={curIcon} />
+        </div>
         <img
-          src={images.bgform}
+          src={imageSrc}
           alt="Calendar Header"
           className="w-full h-full object-cover"
         />
       </div>
 
-      <div className="flex items-center justify-between p-4 bg-gray-100">
+      <div className="flex items-center justify-between p-4 bg-[#2A2A2A]">
         <button
           onClick={goToPreviousMonth}
-          className="p-2 text-gray-700 hover:bg-gray-200 rounded-full"
+          className="p-2 text-white hover:text-gray-300 rounded-full"
         >
           ←
         </button>
         <div className="text-center">
-          <h2 className="text-xl font-bold">{getMonthName(currentDate)}</h2>
-          <p className="text-gray-600">{currentYear}</p>
+          <h2 className="text-xl text-white font-bold">
+            {getMonthName(currentDate)}
+          </h2>
+          <p className="text-white">{currentYear}</p>
         </div>
         <button
           onClick={goToNextMonth}
-          className="p-2 text-gray-700 hover:bg-gray-200 rounded-full"
+          className="p-2 text-white hover:text-gray-300 rounded-full"
         >
           →
         </button>
@@ -104,7 +129,7 @@ const Calendar = () => {
       <div className="p-4">
         <div className="grid grid-cols-7 gap-2">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-            <div key={day} className="text-center font-bold text-gray-700">
+            <div key={day} className="text-center font-bold text-white">
               {day}
             </div>
           ))}
@@ -127,7 +152,7 @@ const Calendar = () => {
             return (
               <div
                 key={day}
-                className="relative text-center p-1.5 rounded text-gray-900 cursor-pointer flex items-center justify-center"
+                className="relative text-center p-1.5 rounded text-white cursor-pointer flex items-center justify-center"
                 onMouseEnter={() => setHoveredDay(day)} // 🟢 Khi hover vào ngày
                 onMouseLeave={() => setHoveredDay(null)} // 🟢 Khi rời khỏi ngày
                 onClick={() =>
@@ -157,6 +182,7 @@ const Calendar = () => {
           })}
         </div>
       </div>
+      <AudioPlayer />
     </div>
   );
 };

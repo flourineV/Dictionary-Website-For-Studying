@@ -149,7 +149,7 @@ function Navbar() {
                     </div>
                     <ul className="py-2">
                       <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
-                        <Link to="/profile">Profile</Link>
+                        <Link to={`/profile/${user._id}`}>Profile</Link>
                       </li>
                       <li className="px-4 py-2 hover:bg-gray-200 cursor-pointer">
                         <Link to="/settings">Settings</Link>

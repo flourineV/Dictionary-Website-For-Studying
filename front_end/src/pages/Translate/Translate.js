@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLanguage } from "@fortawesome/free-solid-svg-icons";
+import { faLanguage, faRepeat } from "@fortawesome/free-solid-svg-icons";
+import Footer from "../../components/Content/Footer";
 
 function Translate() {
   const [sourceText, setSourceText] = useState("");
@@ -39,7 +40,7 @@ function Translate() {
   };
 
   return (
-    <div className="min-h-screen  from-blue-100 via-white to-blue-50 flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 mt-8">
       <div className="bg-[#FFD43B] border-[3px] border-[#191229] rounded-2xl p-8 w-full max-w-4xl shadow-[0_10px_20px_rgba(0,0,0,0.3)] border-b-[10px]">
         <h1 className="text-4xl font-TranslateFont font-bold text-blue-950 text-center mb-8">
           Flourine Translate
@@ -73,7 +74,7 @@ function Translate() {
               }}
               className=" mt-7 bg-[#191229] text-white p-4 rounded-full shadow-lg hover:bg-[#302d45] hover:scale-105 transition transform"
             >
-              Swap
+              <FontAwesomeIcon icon={faRepeat} />
             </button>
 
             <div className="flex-1">

@@ -1,18 +1,22 @@
-import userprofile from "../models/userprofile.js";
+const UserProfile = require("../models/userProfile");
 
-// Lấy thông tin profile của user
+// Lấy thông tin profile của người dùng
 exports.getUserProfile = async (req, res) => {
   try {
-    const userId = req.user.id; // Lấy userId từ JWT
-    const profile = await userprofile.findOne({ userId });
+    // Lấy thông tin profile dựa trên userId từ params
+    const userProfile = await UserProfile.findOne({
+      userId: req.params.userId,
+    });
 
-    if (!profile) {
-      return res.status(404).json({ message: "User profile not found" });
+    // Kiểm tra xem có tìm thấy profile không
+    if (!userProfile) {
+      return res.status(404).json({ error: "User profile not found" });
     }
 
-    res.json(profile);
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(200).json(userProfile);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -31,5 +35,79 @@ exports.updateUserProfile = async (req, res) => {
     res.json(updatedProfile);
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
+  }
+};
+
+exports.createUserProfile = async (req, res) => {
+  try {
+    const { userId, displayName, age, gender, bio, country } = req.body;
+
+    // Kiểm tra xem tất cả các trường có đầy đủ không
+    if (!userId || !displayName || !age || !gender) {
+      return res
+        .status(400)
+        .json({ error: "All required fields must be filled" });
+    }
+
+    // Kiểm tra xem profile đã tồn tại chưa
+    const existingProfile = await UserProfile.findOne({ userId });
+
+    if (existingProfile) {
+      return res.status(400).json({ error: "User profile already exists" });
+    }
+
+    // Tạo mới profile
+    const newProfile = new UserProfile({
+      userId,
+      displayName,
+      age,
+      gender,
+      bio,
+      country,
+    });
+
+    // Lưu profile vào cơ sở dữ liệu
+    await newProfile.save();
+
+    // Trả về thông tin profile đã tạo
+    res.status(201).json(newProfile);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Cập nhật thông tin profile của người dùng
+exports.updateUserProfile = async (req, res) => {
+  try {
+    // Lấy thông tin từ body của request
+    const { displayName, age, gender, bio, country, avatar } = req.body;
+
+    // Tìm profile người dùng theo userId (được truyền trong params)
+    const userProfile = await UserProfile.findOne({
+      userId: req.params.userId,
+    });
+
+    // Kiểm tra xem profile người dùng có tồn tại không
+    if (!userProfile) {
+      return res.status(404).json({ error: "User profile not found" });
+    }
+
+    // Cập nhật các trường thông tin
+    if (displayName) userProfile.displayName = displayName;
+    if (age) userProfile.age = age;
+    if (gender) userProfile.gender = gender;
+    if (bio) userProfile.bio = bio;
+    if (country) userProfile.country = country;
+    if (avatar) userProfile.avatar = avatar;
+
+    // Lưu lại thông tin đã cập nhật
+    await userProfile.save();
+
+    // Trả về profile đã được cập nhật
+    res.status(200).json(userProfile);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };

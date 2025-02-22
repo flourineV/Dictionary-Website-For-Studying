@@ -6,13 +6,14 @@ import SearchBar from "../../layouts/components/Search/Search";
 import Card from "../../components/Card";
 import Calendar from "../../components/Calendar";
 import Leaderboard from "../../components/LeaderBoard";
+import Footer from "../../components/Content/Footer";
 
 const cardData = [
   {
     image: images.wotd,
     title: "Word of the Day",
     description: "Expand your vocabulary daily.",
-    tags: [1, 2, 3],
+    tags: ["vocabs", "daily", ""],
   },
   {
     image: images.wotd,
@@ -63,7 +64,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="pt-1">
+    <div className="pt-1 bg-black w-screen">
       {/* Phần header với gradient và logo */}
       <div className="w-screen h-96 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-opacity-80 grid grid-cols-4 items-center justify-center rounded-lg shadow-lg px-8">
         {/* Cột 1: Logo */}
@@ -108,7 +109,7 @@ const Dashboard = () => {
       {/* Phần chính: Flexbox chia thành 2/3 và 1/3 */}
 
       {/* Phần chính: Flexbox chia thành 2/3 và 1/3 */}
-      <div className="mt-10 pl-20 flex w-screen">
+      <div className="mt-20 pl-20 flex w-screen">
         {/* Phần 2/3 bên trái: Các card */}
         <div className="flex-1 w-2/3">
           <div className="grid grid-cols-3 gap-10">
@@ -135,6 +136,9 @@ const Dashboard = () => {
             <Leaderboard />
           </div>
         </div>
+      </div>
+      <div className="mt-10">
+        <Footer />
       </div>
     </div>
   );
