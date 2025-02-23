@@ -121,13 +121,94 @@ exports.updateProgress = async (req, res) => {
       subOrTest.submittedAt = new Date();
     }
 
-    // Cập nhật % hoàn thành của category
+    // Lấy tất cả bài tập/bài test thuộc category này từ database
+    let totalSubOrTestsDB = 0;
+
+    if (type === "grammar" || type === "vocabulary") {
+      let exerciseModel =
+        type === "grammar" ? GrammarExercise : VocabularyExercise;
+      const exercise = await exerciseModel.findOne({ category: categoryName });
+
+      if (exercise) {
+        totalSubOrTestsDB = exercise.subcategories.length;
+      }
+    } else if (type === "reading" || type === "listening") {
+      let exerciseModel =
+        type === "reading" ? ReadingExercise : ListeningExercise;
+      const test = await exerciseModel.findOne({ category: categoryName });
+
+      if (test) {
+        totalSubOrTestsDB = test.tests.length;
+      }
+    }
+
+    // Nếu có bài test nhưng chưa có bài nào được làm => Tính completion dựa trên tất cả bài
+    // Tìm số bài thực tế trong database
+    if (type === "grammar" || type === "vocabulary") {
+      let exerciseModel =
+        type === "grammar" ? GrammarExercise : VocabularyExercise;
+      const exercise = await exerciseModel.findOne({ category: categoryName });
+      if (exercise) totalSubOrTestsDB = exercise.subcategories.length;
+    } else if (type === "reading" || type === "listening") {
+      let exerciseModel =
+        type === "reading" ? ReadingExercise : ListeningExercise;
+      const test = await exerciseModel.findOne({ category: categoryName });
+      if (test) totalSubOrTestsDB = test.tests.length;
+    }
+
+    // Lấy danh sách tất cả bài tests đã làm của user trong category
+    const completedTests = category.subOrTests.map((s) => s.name);
+
+    // Lấy danh sách bài kiểm tra chưa làm từ database
+    const remainingTests = [];
+    if (type === "reading" || type === "listening") {
+      const test = await ReadingExercise.findOne({ category: categoryName });
+      if (test) {
+        test.tests.forEach((t) => {
+          if (!completedTests.includes(t.name)) {
+            remainingTests.push({
+              name: t.name,
+              completion: 0,
+              correct: 0,
+              total: t.questions.length,
+              accuracy: 0,
+              submittedAt: null,
+            });
+          }
+        });
+      }
+    } else if (type === "grammar" || type === "vocabulary") {
+      const exercise = await GrammarExercise.findOne({
+        category: categoryName,
+      });
+      if (exercise) {
+        exercise.subcategories.forEach((t) => {
+          if (!completedTests.includes(t.name)) {
+            remainingTests.push({
+              name: t.name,
+              completion: 0,
+              correct: 0,
+              total: t.questions.length,
+              accuracy: 0,
+              submittedAt: null,
+            });
+          }
+        });
+      }
+    }
+
+    // Thêm các bài kiểm tra chưa làm vào category để tính completion chính xác
+    category.subOrTests.push(...remainingTests);
+
+    // Tính completion dựa trên tất cả các bài kiểm tra
     const totalSubOrTests = category.subOrTests.length;
     const totalCompletion = category.subOrTests.reduce(
       (sum, s) => sum + s.completion,
       0
     );
-    category.completion = totalCompletion / totalSubOrTests; // Trung bình % hoàn thành tất cả sub/tests
+
+    category.completion =
+      totalSubOrTests > 0 ? totalCompletion / totalSubOrTests : 0;
 
     // Cập nhật % hoàn thành của type (reading, listening,...)
     const totalCategories = userProgress.categories.length;

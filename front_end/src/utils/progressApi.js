@@ -32,10 +32,11 @@ export const updateUserProgress = async (
   categoryName,
   subOrTestType,
   subOrTestName,
-  correct
+  correct,
+  token // Nhận token từ Redux
 ) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/update-progress`, {
+    console.log("📤 Gửi request updateUserProgress với dữ liệu:", {
       userId,
       type,
       categoryName,
@@ -43,9 +44,31 @@ export const updateUserProgress = async (
       subOrTestName,
       correct,
     });
+
+    const response = await axios.post(
+      `${API_BASE_URL}/update-progress`,
+      {
+        userId,
+        type,
+        categoryName,
+        subOrTestType,
+        subOrTestName,
+        correct,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // 🔥 Thêm token vào request
+        },
+      }
+    );
+
+    console.log("✅ API updateUserProgress thành công:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi cập nhật tiến trình", error);
+    console.error(
+      "❌ Lỗi khi cập nhật tiến trình:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };

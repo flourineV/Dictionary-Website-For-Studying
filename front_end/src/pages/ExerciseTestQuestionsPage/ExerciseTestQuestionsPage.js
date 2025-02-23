@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getReadingListeningQuestions } from "../../utils/exercisesApi";
 import { useSelector } from "react-redux";
+import { updateUserProgress } from "../../utils/progressApi";
 
 const ExerciseTestQuestionsPage = () => {
   const { type, category, test } = useParams();
@@ -10,6 +11,7 @@ const ExerciseTestQuestionsPage = () => {
   const [exercise, setExercise] = useState(null);
   const [answers, setAnswers] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const user = useSelector((state) => state.user?.user);
 
   useEffect(() => {
     const fetchExercise = async () => {
@@ -32,7 +34,7 @@ const ExerciseTestQuestionsPage = () => {
     setAnswers((prev) => ({ ...prev, [questionIndex]: value }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSubmitting(true);
 
     let score = 0;
@@ -46,10 +48,56 @@ const ExerciseTestQuestionsPage = () => {
       }
     });
 
-    // Điều hướng đến trang kết quả, không cần API
-    navigate(`/exercises/${type}/category/${category}/test/${test}/result`, {
-      state: { score, total, correctAnswers },
-    });
+    try {
+      console.log("📤 Gửi request updateUserProgress với dữ liệu:");
+      console.log({
+        userId: user._id,
+        type,
+        categoryName: category,
+        subOrTestType: "test",
+        subOrTestName: test,
+        correct: score,
+      });
+
+      const response = await updateUserProgress(
+        user._id,
+        type,
+        category,
+        "test",
+        test,
+        score,
+        token
+      );
+
+      console.log("✅ API updateUserProgress thành công:", response);
+
+      // Điều hướng đến trang kết quả
+      navigate(`/exercises/${type}/category/${category}/test/${test}/result`, {
+        state: { score, total, correctAnswers },
+      });
+    } catch (error) {
+      console.error("❌ Lỗi khi cập nhật tiến trình:", error);
+
+      if (error.response) {
+        console.error("🛑 Response Status:", error.response.status);
+        console.error("🛑 Response Data:", error.response.data);
+        alert(
+          `Có lỗi xảy ra: ${
+            error.response.data.message || "Lỗi không xác định"
+          }`
+        );
+      } else if (error.request) {
+        console.error("🛑 Không nhận được phản hồi từ server:", error.request);
+        alert(
+          "Không thể kết nối đến server. Kiểm tra backend có đang chạy không!"
+        );
+      } else {
+        console.error("🛑 Lỗi không xác định:", error.message);
+        alert(`Lỗi không xác định: ${error.message}`);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!exercise) return <p>Loading...</p>;
