@@ -5,12 +5,13 @@ import {
   faInstagram,
   faLinkedin,
 } from "@fortawesome/free-brands-svg-icons"; // Sử dụng react-icons cho biểu tượng mạng xã hội
+import images from "../../assets/images";
 
 const Footer = () => {
   return (
     <footer className="bg-[#191229] text-white py-12">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Phần thông tin liên hệ */}
           <div className="text-center md:text-left">
             <h3 className="text-xl font-bold mb-4">Contact</h3>
@@ -51,6 +52,15 @@ const Footer = () => {
           </div>
 
           {/* Phần mạng xã hội */}
+          <div className="text-center md:text-right">
+            <h3 className="text-xl font-bold mb-4 mr-4">Tech Stack</h3>
+            <div className="flex flex-col items-end justify-end space-y-1">
+              <img src={images.iconTech.nodejs} className="w-32 h-20 ml-4" />
+              <img src={images.iconTech.reactjs} className="w-26 h-12 mr-5" />
+              <img src={images.iconTech.tailwindcss} className="w-32 h-24" />
+            </div>
+          </div>
+
           <div className="text-center md:text-right">
             <h3 className="text-xl font-bold mb-4">Follow me</h3>
             <div className="flex justify-center md:justify-end space-x-4">

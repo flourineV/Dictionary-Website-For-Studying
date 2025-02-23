@@ -111,3 +111,74 @@ exports.updateUserProfile = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+// Cập nhật điểm số của người dùng
+exports.updateScore = async (req, res) => {
+  try {
+    const { score } = req.body;
+
+    // Kiểm tra xem điểm số có được gửi lên không
+    if (score === undefined) {
+      return res.status(400).json({ error: "Score is required" });
+    }
+
+    // Tìm profile người dùng theo userId
+    const userProfile = await UserProfile.findOne({
+      userId: req.params.userId,
+    });
+
+    if (!userProfile) {
+      return res.status(404).json({ error: "User profile not found" });
+    }
+
+    // Cập nhật điểm số
+    userProfile.score += score;
+
+    // Lưu lại thông tin đã cập nhật
+    await userProfile.save();
+
+    res
+      .status(200)
+      .json({ message: "Score updated successfully", userProfile });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Cập nhật số từ đã học của người dùng
+exports.updateWordLearned = async (req, res) => {
+  try {
+    const { wordLearned } = req.body;
+
+    // Kiểm tra xem số từ học được có được gửi lên không
+    if (wordLearned === undefined) {
+      return res.status(400).json({ error: "wordLearned is required" });
+    }
+
+    // Tìm profile người dùng theo userId
+    const userProfile = await UserProfile.findOne({
+      userId: req.params.userId,
+    });
+
+    if (!userProfile) {
+      return res.status(404).json({ error: "User profile not found" });
+    }
+
+    // Cập nhật số từ đã học
+    userProfile.wordLearned += wordLearned;
+
+    // Lưu lại thông tin đã cập nhật
+    await userProfile.save();
+
+    res
+      .status(200)
+      .json({
+        message: "Word learned count updated successfully",
+        userProfile,
+      });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

@@ -90,12 +90,12 @@ const SearchSection = () => {
         >
           <button
             onClick={handleSignInButton}
-            className="bg-red-500 hover:bg-white hover:text-red-500 transition-all duration-300 text-white font-bold py-3 px-6 rounded-3xl border-white border-2"
+            className="bg-red-500 hover:bg-white hover:text-red-500 transition-all duration-300 text-white font-bold py-3 px-6 rounded-3xl "
           >
             <FontAwesomeIcon icon={faSignIn} className="mr-2" />
             Sign in
           </button>
-          <button className="bg-red-500 hover:bg-white hover:text-red-500 transition-all duration-300 text-white font-bold py-3 px-6 rounded-3xl border-white border-2">
+          <button className="bg-red-500 hover:bg-white hover:text-red-500 transition-all duration-300 text-white font-bold py-3 px-6 rounded-3xl">
             <FontAwesomeIcon icon={faLanguage} className="mr-3" />
             English
             <FontAwesomeIcon icon={faChevronDown} className="ml-2" />
@@ -103,7 +103,7 @@ const SearchSection = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="mt-8 w-full flex justify-center items-center">
+        <div className="-mt-3 w-full flex justify-center items-center">
           <div className="w-full max-w-4xl px-8 ml-36 mt-10">
             <SearchBar
               word={word}

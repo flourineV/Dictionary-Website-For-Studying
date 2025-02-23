@@ -19,6 +19,12 @@ const images = {
   logormbg: require("../images/logormbg.png"),
   searchIntro: require("../images/searchIntro.png"),
   bodyintro: require("../images/bodyintro.jpg"),
+
+  iconTech: {
+    nodejs: require("../images/Node.js.png"),
+    reactjs: require("../images/React.png"),
+    tailwindcss: require("../images/Tailwindcss.png"),
+  },
 };
 
 export default images;

@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import images from "../../../assets/images";
 import {
   FacebookIcon,
@@ -27,6 +27,10 @@ function Navbar() {
   const dropdownRef = useRef(null);
   const location = useLocation();
   const logoRef = useRef(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Reset về đầu trang
+  }, [location.pathname]); // Chạy mỗi khi route thay đổi
 
   // Đóng dropdown khi click ra ngoài
   useEffect(() => {
@@ -101,17 +105,27 @@ function Navbar() {
                 style={isActive(link.to) ? { color: "yellow" } : {}}
               >
                 {link.name}
-                {isActive(link.to) && (
-                  <motion.div
-                    layoutId="underline" //id link
-                    className="absolute bottom-[-3px] left-0 top-[40px] h-1 bg-blue-500 w-full"
-                    style={{
-                      boxShadow:
-                        "0 2px 5px rgba(0, 102, 255, 1), 0 -6px 12px rgba(0, 128, 255, 0.8)",
-                      borderRadius: "15px",
-                    }}
-                  />
-                )}
+                <AnimatePresence mode="wait">
+                  {isActive(link.to) && (
+                    <motion.div
+                      key={location.pathname} // Reset lại khi chuyển trang
+                      className="absolute bottom-[-14px] left-0 h-1 bg-blue-500 w-full"
+                      style={{
+                        boxShadow:
+                          "0 2px 5px rgba(0, 102, 255, 1), 0 -6px 12px rgba(0, 128, 255, 0.8)",
+                        borderRadius: "15px",
+                      }}
+                      initial={{ opacity: 0, scaleX: 0, y: 0 }}
+                      animate={{ opacity: 1, scaleX: 1, y: 0 }}
+                      exit={{ opacity: 0, scaleX: 0, y: 0 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 20,
+                      }}
+                    />
+                  )}
+                </AnimatePresence>
               </Link>
             ))}
           </div>
